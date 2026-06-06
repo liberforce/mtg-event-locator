@@ -1,11 +1,21 @@
 #!/usr/bin/env python
-import pprint
+
+import datetime
 import enum
 import json
+import pathlib
+import pprint
 
 import dotenv
+import icalendar
 import requests
 
+
+class Stores(enum.Enum):
+    GOUPIYA = "Goupiya"
+    LETROLLA2TETES = "Le Troll à 2 Têtes"
+    PARKAGE = "Parkage (Épée de Bois)"
+    QUEIMADA = "Queimada"
 
 class Leagues(enum.Enum):
     LPAlpesMaritimes = 29
@@ -66,14 +76,54 @@ def filter_league_events(events, league: Leagues):
 
     return filtered_events
 
+def infer_organizer(lp_event):
+    desc = lp_event["rawDescription"].lower()
+    title = lp_event["title"].lower()
+
+    for store in Stores:
+        for field in [desc, title]:
+            if store.name.lower() in field:
+                return store
+
+    return None
+
+
+
+def to_ical_event(event):
+    # FIXME: extract URL from description?
+    organizer=infer_organizer(event)
+    ical_event = icalendar.Event.new(
+            summary=event["title"],
+            start=datetime.date.fromisoformat(event["start"]),
+            color=event["color"],
+            description=event["rawDescription"],
+            organizer=organizer.value if organizer else None,
+            # url=event["url"],
+        )
+
+    return ical_event
+
+def create_ical(events):
+    calendar = icalendar.Calendar.new()
+
+    for event in events:
+        ical_event = to_ical_event(event)
+        calendar.add_component(ical_event)
+
+    return calendar.to_ical()
 
 def main():
     config = load_config()
     raw_data = get_lp_calendar_raw_data(config)
-    events = import_json_calendar(raw_data)
+    lp_events = import_json_calendar(raw_data)
     league = get_league(config)
-    events = filter_league_events(events, league)
-    pprint.pprint(events)
+    my_league_events = filter_league_events(lp_events, league)
+    ical_calendar = create_ical(my_league_events)
+    #pprint.pprint(my_league_events)
+
+    path = pathlib.Path("LiguePauper.ics")
+    with path.open("wb") as f:
+        f.write(ical_calendar)
 
 
 if __name__ == "__main__":
