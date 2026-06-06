@@ -17,6 +17,7 @@ class Stores(enum.Enum):
     PARKAGE = "Parkage (Épée de Bois)"
     QUEIMADA = "Queimada"
 
+
 class Leagues(enum.Enum):
     LPAlpesMaritimes = 29
     LPBesak = 21
@@ -54,7 +55,11 @@ def get_lp_calendar_raw_data(config) -> str:
         "https://www.pauper-france.fr/calendrier.php?date=2026-06-01",
     )
     lines = response.text.splitlines()
-    raw_events = (line[line.index("["):].strip(";") for line in lines if "const events = [" in line)
+    raw_events = (
+        line[line.index("[") :].strip(";")
+        for line in lines
+        if "const events = [" in line
+    )
     return next(raw_events)
 
 
@@ -76,6 +81,7 @@ def filter_league_events(events, league: Leagues):
 
     return filtered_events
 
+
 def infer_organizer(lp_event):
     desc = lp_event["rawDescription"].lower()
     title = lp_event["title"].lower()
@@ -88,20 +94,20 @@ def infer_organizer(lp_event):
     return None
 
 
-
 def to_ical_event(event):
     # FIXME: extract URL from description?
-    organizer=infer_organizer(event)
+    organizer = infer_organizer(event)
     ical_event = icalendar.Event.new(
-            summary=event["title"],
-            start=datetime.date.fromisoformat(event["start"]),
-            color=event["color"],
-            description=event["rawDescription"],
-            organizer=organizer.value if organizer else None,
-            # url=event["url"],
-        )
+        summary=event["title"],
+        start=datetime.date.fromisoformat(event["start"]),
+        color=event["color"],
+        description=event["rawDescription"],
+        organizer=organizer.value if organizer else None,
+        # url=event["url"],
+    )
 
     return ical_event
+
 
 def create_ical(events):
     calendar = icalendar.Calendar.new()
