@@ -4,6 +4,7 @@ import datetime
 import enum
 import json
 import pathlib
+import re
 
 import dotenv
 import icalendar
@@ -93,8 +94,19 @@ def infer_organizer(lp_event):
     return None
 
 
+def infer_url(lp_event):
+    desc = lp_event["rawDescription"]
+
+    if urls := re.findall(r'http[s]://[^ "<]*', desc, flags=re.MULTILINE):
+        # Trust the longest URL is several provided.
+        # Longer URLs may lead to event-specific pages.
+        length, url = sorted({len(url): url for url in urls}.items())[-1]
+        return url
+
+    return None
+
+
 def to_ical_event(event):
-    # FIXME: extract URL from description?
     organizer = infer_organizer(event)
     ical_event = icalendar.Event.new(
         summary=event["title"],
@@ -102,7 +114,7 @@ def to_ical_event(event):
         color=event["color"],
         description=event["rawDescription"],
         organizer=organizer.value if organizer else None,
-        # url=event["url"],
+        url=infer_url(event),
     )
 
     return ical_event
