@@ -82,7 +82,7 @@ def filter_league_events(events, league: Leagues):
     return filtered_events
 
 
-def infer_organizer(lp_event):
+def infer_store(lp_event):
     desc = lp_event["rawDescription"].lower()
     title = lp_event["title"].lower()
 
@@ -106,25 +106,27 @@ def infer_url(lp_event):
     return None
 
 
-def to_ical_event(event):
-    organizer = infer_organizer(event)
+def to_ical_event(event, league):
+    lgs = infer_store(event)
     ical_event = icalendar.Event.new(
         summary=event["title"],
         start=datetime.date.fromisoformat(event["start"]),
         color=event["color"],
         description=event["rawDescription"],
-        organizer=organizer.value if organizer else None,
+        organizer=league.name if league is not None else None,
+        categories=(event["categorie"]),
+        location=lgs.value if lgs else None,
         url=infer_url(event),
     )
 
     return ical_event
 
 
-def create_ical(events):
+def create_ical(events, league=None):
     calendar = icalendar.Calendar.new()
 
     for event in events:
-        ical_event = to_ical_event(event)
+        ical_event = to_ical_event(event, league)
         calendar.add_component(ical_event)
 
     return calendar.to_ical()
@@ -142,7 +144,7 @@ def main():
     lp_events = import_json_calendar(raw_data)
     league = get_league(config)
     my_league_events = filter_league_events(lp_events, league)
-    ical_calendar = create_ical(my_league_events)
+    ical_calendar = create_ical(my_league_events, league)
     save_calendar(ical_calendar)
 
     # import pprint
