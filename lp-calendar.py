@@ -53,15 +53,15 @@ def import_json_calendar(raw_events):
     return events
 
 
-def get_league_id(config):
-    return getattr(Leagues, config["LEAGUE"]).value
+def get_league(config):
+    return getattr(Leagues, config["LEAGUE_NAME"])
 
 
-def filter_league_events(events, league_id):
+def filter_league_events(events, league: Leagues):
     filtered_events = []
 
     for event in events:
-        if int(event["ligue_id"]) == league_id:
+        if int(event["ligue_id"]) == league.value:
             filtered_events.append(event)
 
     return filtered_events
@@ -71,8 +71,8 @@ def main():
     config = load_config()
     raw_data = get_lp_calendar_raw_data(config)
     events = import_json_calendar(raw_data)
-    league_id = get_league_id(config)
-    events = filter_league_events(events, league_id)
+    league = get_league(config)
+    events = filter_league_events(events, league)
     pprint.pprint(events)
 
 
