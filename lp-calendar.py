@@ -4,7 +4,6 @@ import datetime
 import enum
 import json
 import pathlib
-import pprint
 
 import dotenv
 import icalendar
@@ -118,6 +117,13 @@ def create_ical(events):
 
     return calendar.to_ical()
 
+
+def save_calendar(ical_calendar):
+    path = pathlib.Path("LiguePauper.ics")
+    with path.open("wb") as f:
+        f.write(ical_calendar)
+
+
 def main():
     config = load_config()
     raw_data = get_lp_calendar_raw_data(config)
@@ -125,11 +131,10 @@ def main():
     league = get_league(config)
     my_league_events = filter_league_events(lp_events, league)
     ical_calendar = create_ical(my_league_events)
-    #pprint.pprint(my_league_events)
+    save_calendar(ical_calendar)
 
-    path = pathlib.Path("LiguePauper.ics")
-    with path.open("wb") as f:
-        f.write(ical_calendar)
+    # import pprint
+    # pprint.pprint(my_league_events)
 
 
 if __name__ == "__main__":
