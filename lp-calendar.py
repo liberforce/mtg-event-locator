@@ -46,11 +46,11 @@ class League(enum.Enum):
     LPCarcassonne = 30
 
 
-def load_config():
+def load_config() -> dict[tuple[str, str]]:
     return dotenv.dotenv_values("lp.env")
 
 
-def get_lp_calendar_raw_data(config) -> str:
+def get_lp_calendar_raw_data(config: dict[tuple[str, str]]) -> str:
     response = requests.get(
         "https://www.pauper-france.fr/calendrier.php?date=2026-06-01",
     )
@@ -63,16 +63,16 @@ def get_lp_calendar_raw_data(config) -> str:
     return next(raw_events)
 
 
-def import_json_calendar(raw_events):
+def import_json_calendar(raw_events: str) -> dict:
     events = json.loads(raw_events)
     return events
 
 
-def get_league(config):
+def get_league(config: dict[tuple[str, str]]) -> League:
     return getattr(League, config["LEAGUE_NAME"])
 
 
-def filter_league_events(events, league: League):
+def filter_league_events(events, league: League) -> dict:
     filtered_events = []
 
     for event in events:
@@ -94,7 +94,7 @@ def infer_store(lp_event: dict) -> LocalGameStore | None:
     return None
 
 
-def infer_url(lp_event):
+def infer_url(lp_event: dict) -> str | None:
     desc = lp_event["rawDescription"]
 
     if urls := re.findall(r'http[s]://[^ "<]*', desc, flags=re.MULTILINE):
@@ -106,7 +106,7 @@ def infer_url(lp_event):
     return None
 
 
-def to_ical_event(event, league):
+def to_ical_event(event: dict, league: League) -> icalendar.Event:
     lgs = infer_store(event)
     ical_event = icalendar.Event.new(
         summary=event["title"],
@@ -122,7 +122,7 @@ def to_ical_event(event, league):
     return ical_event
 
 
-def create_ical(events, league=None):
+def create_ical(events: dict, league=None) -> icalendar.Calendar:
     calendar = icalendar.Calendar.new()
 
     for event in events:
@@ -132,13 +132,13 @@ def create_ical(events, league=None):
     return calendar.to_ical()
 
 
-def save_calendar(ical_calendar):
+def save_calendar(ical_calendar: icalendar.Calendar) -> None:
     path = pathlib.Path("LiguePauper.ics")
     with path.open("wb") as f:
         f.write(ical_calendar)
 
 
-def main():
+def main() -> None:
     config = load_config()
     raw_data = get_lp_calendar_raw_data(config)
     lp_events = import_json_calendar(raw_data)
