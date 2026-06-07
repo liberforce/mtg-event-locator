@@ -11,14 +11,14 @@ import icalendar
 import requests
 
 
-class Stores(enum.Enum):
+class LocalGameStore(enum.Enum):
     GOUPIYA = "Goupiya"
     LETROLLA2TETES = "Le Troll à 2 Têtes"
     PARKAGE = "Parkage (Épée de Bois)"
     QUEIMADA = "Queimada"
 
 
-class Leagues(enum.Enum):
+class League(enum.Enum):
     LPLyon = 1
     LPCantal = 6
     LPRouen = 7
@@ -69,10 +69,10 @@ def import_json_calendar(raw_events):
 
 
 def get_league(config):
-    return getattr(Leagues, config["LEAGUE_NAME"])
+    return getattr(League, config["LEAGUE_NAME"])
 
 
-def filter_league_events(events, league: Leagues):
+def filter_league_events(events, league: League):
     filtered_events = []
 
     for event in events:
@@ -82,11 +82,11 @@ def filter_league_events(events, league: Leagues):
     return filtered_events
 
 
-def infer_store(lp_event):
+def infer_store(lp_event: dict) -> LocalGameStore | None:
     desc = lp_event["rawDescription"].lower()
     title = lp_event["title"].lower()
 
-    for store in Stores:
+    for store in LocalGameStore:
         for field in [desc, title]:
             if store.name.lower() in field:
                 return store
