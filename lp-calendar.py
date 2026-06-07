@@ -19,31 +19,31 @@ class Stores(enum.Enum):
 
 
 class Leagues(enum.Enum):
-    LPAlpesMaritimes = 29
-    LPBesak = 21
-    LPBordeaux = 15
-    LPCalais = 13
-    LPCantal = 6
-    LPCarcassonne = 30
-    LPChambéry = 10
-    LPClermont = 8
-    LPLimogesPoitiers = 23
-    LPLorient = 17
     LPLyon = 1
-    LPMontaigu = 25
-    LPMontpellier = 9
-    LPNord = 19
-    LPParis = 12
-    LPRennes = 26
-    LPRoanne = 11
+    LPCantal = 6
     LPRouen = 7
+    LPClermont = 8
+    LPMontpellier = 9
+    LPChambéry = 10
+    LPRoanne = 11
+    LPParis = 12
+    LPCalais = 13
     LPStrasbourg = 14
-    LPToulon = 18
-    LPToulouse = 24
-    LPTours = 27
-    LPVirtuelle = 20
-    LPVitrolles = 22
+    LPBordeaux = 15
     xHorsLigue = 16
+    LPLorient = 17
+    LPToulon = 18
+    LPNord = 19
+    LPVirtuelle = 20
+    LPBesak = 21
+    LPVitrolles = 22
+    LPLimogesPoitiers = 23
+    LPToulouse = 24
+    LPMontaigu = 25
+    LPRennes = 26
+    LPTours = 27
+    LPAlpesMaritimes = 29
+    LPCarcassonne = 30
 
 
 def load_config():
