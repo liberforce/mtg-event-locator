@@ -1,7 +1,7 @@
 [project]
-name = "lpp-calendar"
-version = "0.2.0.dev1"
-description = "Calendar converter for MTG French Pauper events"
+name = "mtg-event-locator"
+version = "0.2.0.dev2"
+description = "Event locator for Magic The Gathering (mainly for the French Pauper League)"
 readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
