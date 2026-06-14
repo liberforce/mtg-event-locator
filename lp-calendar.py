@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from typing import Optional
 
 import datetime
 import enum
@@ -83,7 +84,7 @@ def filter_league_events(events, league: League) -> dict:
     return filtered_events
 
 
-def infer_store(lp_event: dict) -> LocalGameStore | None:
+def infer_store(lp_event: dict) -> Optional[LocalGameStore]:
     desc = lp_event["rawDescription"].lower()
     title = lp_event["title"].lower()
 
@@ -95,7 +96,7 @@ def infer_store(lp_event: dict) -> LocalGameStore | None:
     return None
 
 
-def infer_url(lp_event: dict) -> str | None:
+def infer_url(lp_event: dict) -> Optional[str]:
     desc = lp_event["rawDescription"]
     urls = re.findall(r'http[s]://[^ "<]*', desc, flags=re.MULTILINE)
 
