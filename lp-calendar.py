@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-from typing import Optional
+from typing import Optional, Callable
 
+from packaging.version import Version
 import datetime
 import enum
 import json
@@ -12,6 +13,7 @@ import dotenv
 import icalendar
 import requests
 
+ICAL_VERSION = Version(icalendar.__version__)
 
 class LocalGameStore(enum.Enum):
     GOUPIYA = "Goupiya"
@@ -109,9 +111,17 @@ def infer_url(lp_event: dict) -> Optional[str]:
     return None
 
 
+def get_event_maker() -> Callable[..., icalendar.Event]:
+    if ICAL_VERSION >= Version("7.0"):
+        return icalendar.Event.new
+    else:
+        return icalendar.Event
+
+
 def to_ical_event(event: dict, league: League) -> icalendar.Event:
     lgs = infer_store(event)
-    ical_event = icalendar.Event.new(
+    event_maker = get_event_maker()
+    ical_event = event_maker(
         uid=uuid.UUID(int=int(event["id"])),
         summary=event["title"],
         start=datetime.date.fromisoformat(event["start"]),
@@ -126,8 +136,17 @@ def to_ical_event(event: dict, league: League) -> icalendar.Event:
     return ical_event
 
 
+def get_calendar_maker() -> Callable[..., icalendar.Calendar]:
+    if ICAL_VERSION >= Version("7.0"):
+        calendar = icalendar.Calendar.new
+    else:
+        calendar = icalendar.Calendar
+
+    return calendar
+
 def create_ical(events: dict, league=None) -> icalendar.Calendar:
-    calendar = icalendar.Calendar.new()
+    calendar_maker = get_calendar_maker()
+    calendar = calendar_maker()
 
     for event in events:
         ical_event = to_ical_event(event, league)
