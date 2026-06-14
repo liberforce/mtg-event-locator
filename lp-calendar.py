@@ -159,8 +159,8 @@ def create_ical(events: dict, league=None) -> icalendar.Calendar:
     return calendar.to_ical()
 
 
-def save_calendar(ical_calendar: icalendar.Calendar) -> None:
-    path = pathlib.Path("LiguePauper.ics")
+def save_calendar(ical_calendar: icalendar.Calendar, name: str = "default") -> None:
+    path = pathlib.Path(f"{name}.ics")
     with path.open("wb") as f:
         f.write(ical_calendar)
 
@@ -172,7 +172,7 @@ def main() -> None:
     league = get_league(config)
     my_league_events = filter_league_events(lp_events, league)
     ical_calendar = create_ical(my_league_events, league)
-    save_calendar(ical_calendar)
+    save_calendar(ical_calendar, name=league.name)
 
     # import pprint
     # pprint.pprint(my_league_events)
