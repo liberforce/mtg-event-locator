@@ -17,3 +17,6 @@ tags
 
 # Environment files
 *.env
+
+# Calendar files
+*.ics
