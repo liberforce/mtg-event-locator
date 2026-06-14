@@ -15,6 +15,7 @@ import requests
 
 ICAL_VERSION = Version(icalendar.__version__)
 
+
 class LocalGameStore(enum.Enum):
     GOUPIYA = "Goupiya"
     LETROLLA2TETES = "Le Troll à 2 Têtes"
@@ -143,6 +144,7 @@ def get_calendar_maker() -> Callable[..., icalendar.Calendar]:
         calendar = icalendar.Calendar
 
     return calendar
+
 
 def create_ical(events: dict, league=None) -> icalendar.Calendar:
     calendar_maker = get_calendar_maker()
