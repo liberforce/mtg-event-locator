@@ -5,6 +5,7 @@ import enum
 import json
 import pathlib
 import re
+import uuid
 
 import dotenv
 import icalendar
@@ -109,6 +110,7 @@ def infer_url(lp_event: dict) -> str | None:
 def to_ical_event(event: dict, league: League) -> icalendar.Event:
     lgs = infer_store(event)
     ical_event = icalendar.Event.new(
+        uid=uuid.UUID(int=int(event["id"])),
         summary=event["title"],
         start=datetime.date.fromisoformat(event["start"]),
         color=event["color"],
