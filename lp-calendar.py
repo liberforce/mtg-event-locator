@@ -6,6 +6,7 @@ import datetime
 import enum
 import json
 import pathlib
+import os
 import re
 import uuid
 
@@ -52,7 +53,8 @@ class League(enum.Enum):
 
 
 def load_config() -> dict:
-    return dotenv.dotenv_values("lp.env")
+    dotenv.load_dotenv()
+    return dict(**os.environ)
 
 
 def get_lp_calendar_raw_data(config: dict) -> str:
