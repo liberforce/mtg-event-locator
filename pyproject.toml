@@ -3,11 +3,11 @@ name = "lpp-calendar"
 version = "0.1.0"
 description = "Calendar converter for MTG French Pauper events"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.7"
 dependencies = [
-    "icalendar>=7.1.2",
-    "python-dotenv>=1.2.2",
-    "requests>=2.34.2",
+    "icalendar>=5",
+    "python-dotenv>=0.21",
+    "requests>=2.31",
 ]
 
 [dependency-groups]
