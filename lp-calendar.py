@@ -75,8 +75,8 @@ def import_json_calendar(raw_events: str) -> dict:
     return events
 
 
-def get_league(config: dict) -> League:
-    return getattr(League, config["LEAGUE_NAME"])
+def to_league(league_name: str) -> League:
+    return getattr(League, league_name)
 
 
 def filter_league_events(events, league: League) -> dict:
@@ -169,10 +169,16 @@ def main() -> None:
     config = load_config()
     raw_data = get_lp_calendar_raw_data(config)
     lp_events = import_json_calendar(raw_data)
-    league = get_league(config)
-    my_league_events = filter_league_events(lp_events, league)
-    ical_calendar = create_ical(my_league_events, league)
-    save_calendar(ical_calendar, name=league.name)
+    league_name = config.get("LEAGUE_NAME")
+    if league_name:
+        leagues = [to_league(league_name)]
+    else:
+        leagues = list(League)
+
+    for league in leagues:
+        my_league_events = filter_league_events(lp_events, league)
+        ical_calendar = create_ical(my_league_events, league)
+        save_calendar(ical_calendar, name=league.name)
 
     # import pprint
     # pprint.pprint(my_league_events)
