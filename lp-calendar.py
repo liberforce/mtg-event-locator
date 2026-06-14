@@ -97,8 +97,9 @@ def infer_store(lp_event: dict) -> LocalGameStore | None:
 
 def infer_url(lp_event: dict) -> str | None:
     desc = lp_event["rawDescription"]
+    urls = re.findall(r'http[s]://[^ "<]*', desc, flags=re.MULTILINE)
 
-    if urls := re.findall(r'http[s]://[^ "<]*', desc, flags=re.MULTILINE):
+    if urls:
         # Trust the longest URL is several provided.
         # Longer URLs may lead to event-specific pages.
         length, url = sorted({len(url): url for url in urls}.items())[-1]
