@@ -48,11 +48,11 @@ class League(enum.Enum):
     LPCarcassonne = 30
 
 
-def load_config() -> dict[tuple[str, str]]:
+def load_config() -> dict:
     return dotenv.dotenv_values("lp.env")
 
 
-def get_lp_calendar_raw_data(config: dict[tuple[str, str]]) -> str:
+def get_lp_calendar_raw_data(config: dict) -> str:
     response = requests.get(
         "https://www.pauper-france.fr/calendrier.php?date=2026-06-01",
     )
@@ -70,7 +70,7 @@ def import_json_calendar(raw_events: str) -> dict:
     return events
 
 
-def get_league(config: dict[tuple[str, str]]) -> League:
+def get_league(config: dict) -> League:
     return getattr(League, config["LEAGUE_NAME"])
 
 
