@@ -3,5 +3,9 @@
 import mtg_event_locator.lpf.calendar as cal
 
 
-if __name__ == "__main__":
+def main():
     cal.generate_lpf_calendar()
+
+
+if __name__ == "__main__":
+    main()
