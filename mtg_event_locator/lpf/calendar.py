@@ -165,7 +165,7 @@ def save_calendar(ical_calendar: icalendar.Calendar, name: str = "default") -> N
         f.write(ical_calendar)
 
 
-def main() -> None:
+def generate_lpf_calendar() -> None:
     config = load_config()
     raw_data = get_lp_calendar_raw_data(config)
     lp_events = import_json_calendar(raw_data)
@@ -182,7 +182,3 @@ def main() -> None:
 
     # import pprint
     # pprint.pprint(my_league_events)
-
-
-if __name__ == "__main__":
-    main()
